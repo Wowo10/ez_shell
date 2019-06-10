@@ -1,5 +1,8 @@
 #![feature(const_vec_new)]
 
+mod general;
+use general::*;
+
 fn wait_for_input() -> String {
     use std::io::{stdin, stdout, Write};
     let mut s = String::new();
@@ -42,6 +45,9 @@ fn previous_input() -> String {
 
 fn handle_input(input: &str) -> bool {
     match input {
+        "dir" => {
+            general::dir();
+        }
         "same" => {
             let previous_command = previous_input();
 
