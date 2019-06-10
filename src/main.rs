@@ -15,7 +15,13 @@ fn wait_for_input() -> String {
 }
 
 fn prompt() {
-    print!("{}", "~> ");
+    use std::env;
+    print!(
+        "{} ~> ",
+        env::current_dir()
+            .expect("cannot read current directory")
+            .display()
+    );
 }
 
 fn main() {
