@@ -24,11 +24,14 @@ fn main() {
     let welcome_message =
         "\nWelcome to EZ_Shell, input your command, you`re welcome to exit any time.\nCommands are case insensitive\n\n";
 
+    let mut command_queue: Vec<String> = Vec::new();
+
     println!("{}", welcome_message);
 
     while !exit {
         prompt();
         let input = wait_for_input();
+        command_queue.push(input.clone());
 
         match input.to_lowercase().as_ref() {
             "exit" => {
