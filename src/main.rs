@@ -19,10 +19,26 @@ fn prompt() {
 }
 
 fn main() {
+    let mut exit = false;
+
     let welcome_message =
-        "\nWelcome to EZ_Shell, input your command, you`re welcome to exit any time.\n\n";
+        "\nWelcome to EZ_Shell, input your command, you`re welcome to exit any time.\nCommands are case insensitive\n\n";
+
     println!("{}", welcome_message);
-    prompt();
-    let input = wait_for_input();
-    println!("{}", input);
+
+    while !exit {
+        prompt();
+        let input = wait_for_input();
+
+        match input.to_lowercase().as_ref() {
+            "exit" => {
+                println!("Bye!");
+                exit = true;
+            }
+            _ => {
+                println!("Unknown Command!");
+            }
+        }
+
+    }
 }
