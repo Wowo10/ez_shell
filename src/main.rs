@@ -1,3 +1,5 @@
+#![feature(const_vec_new)]
+
 fn wait_for_input() -> String {
     use std::io::{stdin, stdout, Write};
     let mut s = String::new();
@@ -14,40 +16,76 @@ fn wait_for_input() -> String {
     s
 }
 
-fn prompt() {
+fn prompt(command: &str) {
     use std::env;
     print!(
-        "{} ~> ",
+        "{} ~> {}",
         env::current_dir()
             .expect("cannot read current directory")
-            .display()
+            .display(),
+        command
     );
+
+    if command != "" {
+        println!("");
+    }
 }
 
+fn previous_input() -> String {
+    unsafe {
+        match COMMAND_QUEUE.last() {
+            None => "".to_string(),
+            Some(command) => command.clone(),
+        }
+    }
+}
+
+fn handle_input(input: &str) -> bool {
+    match input {
+        "same" => {
+            let previous_command = previous_input();
+
+            prompt(previous_command.as_ref());
+            handle_input(previous_command.as_ref());
+            return true;
+        }
+        "exit" => {
+            println!("Bye!");
+            unsafe {
+                EXIT = true;
+            }
+        }
+        _ => {
+            println!("Unknown Command!");
+        }
+    }
+    false
+}
+
+static mut EXIT: bool = false;
+static mut COMMAND_QUEUE: Vec<String> = Vec::new();
+
 fn main() {
-    let mut exit = false;
 
     let welcome_message =
         "\nWelcome to EZ_Shell, input your command, you`re welcome to exit any time.\nCommands are case insensitive\n\n";
 
-    let mut command_queue: Vec<String> = Vec::new();
-
     println!("{}", welcome_message);
 
-    while !exit {
-        prompt();
-        let input = wait_for_input();
-        command_queue.push(input.clone());
+    let mut local_exit: bool = false;
 
-        match input.to_lowercase().as_ref() {
-            "exit" => {
-                println!("Bye!");
-                exit = true;
-            }
-            _ => {
-                println!("Unknown Command!");
+    while !local_exit {
+        prompt("");
+        let input = wait_for_input();
+
+        let same_command = handle_input(input.to_lowercase().as_ref());
+
+        unsafe {
+            local_exit = EXIT;
+
+            if !same_command {
+                COMMAND_QUEUE.push(input.clone());
             }
         }
-
     }
 }
