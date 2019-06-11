@@ -1,7 +1,6 @@
 #![feature(const_vec_new)]
 
 mod general;
-use general::*;
 
 fn wait_for_input() -> String {
     use std::io::{stdin, stdout, Write};
@@ -22,16 +21,13 @@ fn wait_for_input() -> String {
 fn prompt(command: &str) {
     use std::env;
     print!(
-        "{} ~> {}",
+        "{} ~> {}{}",
         env::current_dir()
             .expect("cannot read current directory")
             .display(),
-        command
+        command,
+        if command != "" { "\n" } else { "" }
     );
-
-    if command != "" {
-        println!("");
-    }
 }
 
 fn previous_input() -> String {
@@ -44,9 +40,17 @@ fn previous_input() -> String {
 }
 
 fn handle_input(input: &str) -> bool {
-    match input {
-        "dir" => {
+    let split = input.split(" ");
+    let vec: Vec<&str> = split.collect();
+
+    let first = vec.first().unwrap();
+
+    match first[..].to_lowercase().as_ref() {
+        "dir" | "ls" => {
             general::dir();
+        }
+        "cd" => {
+            general::cd(vec[1]);
         }
         "same" => {
             let previous_command = previous_input();
@@ -55,7 +59,7 @@ fn handle_input(input: &str) -> bool {
             handle_input(previous_command.as_ref());
             return true;
         }
-        "exit" => {
+        "exit" | "q" => {
             println!("Bye!");
             unsafe {
                 EXIT = true;
@@ -72,7 +76,6 @@ static mut EXIT: bool = false;
 static mut COMMAND_QUEUE: Vec<String> = Vec::new();
 
 fn main() {
-
     let welcome_message =
         "\nWelcome to EZ_Shell, input your command, you`re welcome to exit any time.\nCommands are case insensitive\n\n";
 
@@ -84,7 +87,7 @@ fn main() {
         prompt("");
         let input = wait_for_input();
 
-        let same_command = handle_input(input.to_lowercase().as_ref());
+        let same_command = handle_input(input.as_ref());
 
         unsafe {
             local_exit = EXIT;
