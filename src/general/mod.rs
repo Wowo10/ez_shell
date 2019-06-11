@@ -29,3 +29,7 @@ pub fn cd(path: &str) {
         }
     }
 }
+
+pub fn pwd(){
+    println!("{}", env::current_dir().unwrap().display());
+}

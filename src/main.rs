@@ -49,6 +49,9 @@ fn handle_input(input: &str) -> bool {
         "dir" | "ls" => {
             general::dir();
         }
+        "pwd" => {
+            general::pwd();
+        }
         "cd" => {
             general::cd(vec[1]);
         }
@@ -67,6 +70,7 @@ fn handle_input(input: &str) -> bool {
         }
         _ => {
             println!("Unknown Command!");
+            return true;
         }
     }
     false
