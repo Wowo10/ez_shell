@@ -1,4 +1,5 @@
-trait Command{
-    pub fn run();
-    pub fn help();
+pub trait Command{
+    fn name() -> &'static str;
+    fn run();
+    fn help() -> &'static str;
 }

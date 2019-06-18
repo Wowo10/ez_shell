@@ -1,6 +1,9 @@
 #![feature(const_vec_new)]
 
 mod general;
+mod traits;
+
+use traits::*;
 
 fn wait_for_input() -> String {
     use std::io::{stdin, stdout, Write};
@@ -47,10 +50,10 @@ fn handle_input(input: &str) -> bool {
 
     match first[..].to_lowercase().as_ref() {
         "dir" | "ls" => {
-            general::dir();
+            general::Directory::run();
         }
         "pwd" => {
-            general::pwd();
+            general::PrintWorkingDirectory::run();
         }
         "cd" => {
             general::cd(vec[1]);
