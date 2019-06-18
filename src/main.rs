@@ -47,19 +47,17 @@ fn handle_input(input: &str) -> bool {
     let vec: Vec<&str> = split.collect();
 
     let first = vec.first().unwrap();
+    let vec = &vec[1..];
 
     match first[..].to_lowercase().as_ref() {
         "dir" | "ls" => {
-            general::Directory::run(&Vec::new());
+            general::Directory::run(&vec);
         }
         "pwd" => {
-            general::PrintWorkingDirectory::run(&Vec::new());
+            general::PrintWorkingDirectory::run(&vec);
         }
         "cd" => {
-            let mut temp_vec: Vec<String> = Vec::new(); 
-            temp_vec.push(String::from(vec[1]));
-
-            general::ChangeDirectory::run(&temp_vec);
+            general::ChangeDirectory::run(&vec);
         }
         "same" => {
             let previous_command = previous_input();

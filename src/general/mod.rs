@@ -7,7 +7,7 @@ use super::traits::Command;
 pub struct Directory {}
 
 impl Command for Directory {
-    fn run(args: &Vec<String>){
+    fn run(_: &[&str]){
         println!("Current directory:");
         visit_dirs().unwrap();
     }
@@ -44,7 +44,7 @@ pub struct ChangeDirectory {
 }
 
 impl Command for ChangeDirectory {
-    fn run(args: &Vec<String>){
+    fn run(args: &[&str]){
         cd(&args[0]);
     }
 
@@ -56,7 +56,7 @@ impl Command for ChangeDirectory {
 pub struct PrintWorkingDirectory{}
 
 impl Command for PrintWorkingDirectory{
-    fn run(args: &Vec<String>){
+    fn run(_: &[&str]){
         println!("{}", env::current_dir().unwrap().display());
     }
 
@@ -68,7 +68,7 @@ impl Command for PrintWorkingDirectory{
 pub struct Copy {}
 
 impl Command for Copy {
-    fn run(args: &Vec<String>){
+    fn run(args: &[&str]){
 
     }
 
