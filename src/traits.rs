@@ -1,4 +1,4 @@
 pub trait Command{
-    fn run();
+    fn run(args: &Vec<String>);
     fn help() -> &'static str;
 }

@@ -50,13 +50,16 @@ fn handle_input(input: &str) -> bool {
 
     match first[..].to_lowercase().as_ref() {
         "dir" | "ls" => {
-            general::Directory::run();
+            general::Directory::run(&Vec::new());
         }
         "pwd" => {
-            general::PrintWorkingDirectory::run();
+            general::PrintWorkingDirectory::run(&Vec::new());
         }
         "cd" => {
-            general::cd(vec[1]);
+            let mut temp_vec: Vec<String> = Vec::new(); 
+            temp_vec.push(String::from(vec[1]));
+
+            general::ChangeDirectory::run(&temp_vec);
         }
         "same" => {
             let previous_command = previous_input();
