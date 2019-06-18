@@ -15,16 +15,6 @@ impl Command for Directory {
     fn help() -> &'static str {
         "Wypisuje na ekran zawartość obecnego katalogu."
     }
-
-    fn name() -> &'static str {
-        "dir"
-    }
-}
-
-
-pub fn dir() {
-    println!("Current directory:");
-    visit_dirs().unwrap();
 }
 
 fn visit_dirs() -> io::Result<()> {
@@ -59,14 +49,9 @@ impl Command for ChangeDirectory {
     }
 
     fn help() -> &'static str {
-        "zmienia katalog"
-    }
-
-    fn name() -> &'static str {
-        "cd"
+        "Zmienia katalog."
     }
 }
-
 
 pub struct PrintWorkingDirectory{}
 
@@ -76,16 +61,8 @@ impl Command for PrintWorkingDirectory{
     }
 
     fn help() -> &'static str {
-        "Wypisuje na terminal obecny katalog."
+        "Wypisuje na terminal ścieżkę do obecnego katalogu."
     }
-
-    fn name() -> &'static str {
-        "pwd"
-    }
-}
-
-pub fn pwd() {
-    println!("{}", env::current_dir().unwrap().display());
 }
 
 pub struct Copy {}
@@ -97,9 +74,5 @@ impl Command for Copy {
 
     fn help() -> &'static str {
         "Kopiuje plik z jednego miejsca w drugie."
-    }
-
-    fn name() -> &'static str {
-        "copy"
     }
 }
