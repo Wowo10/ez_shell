@@ -7,11 +7,22 @@ pub fn message_helper(header: &str, explanation: &str, aliases: &str) {
     println!("{}\n{}\naliasy: {}", header, explanation, aliases);
 }
 
+fn check_args_len(args: &[&str], expected_amount: u8) -> bool{
+    let args_len = args.len();
+
+    if args_len < expected_amount.into() {
+        println!("Zbyt mało parametrów przekazanych oczekuję {}, otrzymałem: {}", expected_amount, args_len);
+        false
+    } else {
+        true
+    }
+}
+
 pub struct Directory {}
 
 impl Command for Directory {
     fn run(_: &[&str]) {
-        println!("Bierząca lokacja:");
+        println!("Bierząca lokalizacja:");
         visit_dirs().unwrap();
     }
 
@@ -46,6 +57,8 @@ pub struct ChangeDirectory {}
 
 impl Command for ChangeDirectory {
     fn run(args: &[&str]) {
+        check_args_len(args, 1);
+        
         use std::env;
 
         let mut current = env::current_dir().unwrap();
@@ -132,6 +145,8 @@ pub struct Touch {}
 
 impl Command for Touch {
     fn run(args: &[&str]) {
+        check_args_len(args, 1);
+        
         let mut file = create_file(args[0]);
 
         if args.len() > 1 && args[1] != ""{
@@ -152,6 +167,8 @@ pub struct DeleteFile {}
 
 impl Command for DeleteFile {
     fn run(args: &[&str]) {
+        check_args_len(args, 1);
+        
         delete_file(args[0]);
     }
 
@@ -164,6 +181,8 @@ pub struct ReadFile {}
 
 impl Command for ReadFile {
     fn run(args: &[&str]) {
+        check_args_len(args, 1);
+        
         let content = read_file(args[0]);
         println!("{}", content);
     }
@@ -181,6 +200,8 @@ pub struct CopyFile {}
 
 impl Command for CopyFile {
     fn run(args: &[&str]) {
+        check_args_len(args, 2);
+
         copy_file(args[0], args[1]);
     }
 
@@ -197,6 +218,8 @@ pub struct MoveFile {}
 
 impl Command for MoveFile {
     fn run(args: &[&str]) {
+        check_args_len(args, 2);
+
         copy_file(args[0], args[1]);
 
         delete_file(args[0]);
