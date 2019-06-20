@@ -47,8 +47,6 @@ fn handle_input(input: &str) -> bool {
     let first = vec.first().unwrap();
     let vec = &vec[1..];
 
-    println!("{:?}, {}", vec, vec.len()); //DEBUG
-
     match first[..].to_lowercase().as_ref() {
         "dir" | "ls" => {
             if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){

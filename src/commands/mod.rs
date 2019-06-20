@@ -31,23 +31,19 @@ fn visit_dirs() -> io::Result<()> {
     Ok(())
 }
 
-pub fn cd(path: &str) {
-    let mut current = env::current_dir().unwrap();
-    current.push(path);
-
-    match env::set_current_dir(current) {
-        Ok(_) => {}
-        Err(e) => {
-            println!("Nie mogłem zmienić lokalizacji, sprawdź czy istnieje. {}", e);
-        }
-    }
-}
-
 pub struct ChangeDirectory {}
 
 impl Command for ChangeDirectory {
     fn run(args: &[&str]){
-        cd(&args[0]);
+        let mut current = env::current_dir().unwrap();
+        current.push(&args[0]);
+
+        match env::set_current_dir(current) {
+            Ok(_) => {}
+            Err(e) => {
+                println!("Nie mogłem zmienić lokalizacji, sprawdź czy istnieje. {}", e);
+            }
+        }
     }
 
     fn help() {
@@ -71,7 +67,8 @@ pub struct Touch{}
 
 impl Command for Touch{
     fn run(args: &[&str]){
-
+        use std::fs::File;
+        File::create(&args[0]).expect("Nie mogłem stworzyć pliku.");
     }
 
     fn help() {
