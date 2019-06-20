@@ -49,68 +49,34 @@ fn handle_input(input: &str) -> bool {
 
     match first[..].to_lowercase().as_ref() {
         "dir" | "ls" => {
-            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
-                commands::Directory::run(&args);
-            } else {
-                commands::Directory::help();
-            }
+            run_command(args, &commands::Directory::run, &commands::Directory::help);
         }
         "pwd" => {
-            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
-                commands::PrintWorkingDirectory::run(&args);
-            } else {
-                commands::PrintWorkingDirectory::help();
-            }
+            run_command(args, &commands::PrintWorkingDirectory::run, &commands::PrintWorkingDirectory::help);
         }
         "cd" => {
-            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
-                commands::ChangeDirectory::run(&args);
-            } else {
-                commands::ChangeDirectory::help();
-            }
+            run_command(args, &commands::ChangeDirectory::run, &commands::ChangeDirectory::help);
         }
         "cp" | "copy" =>{
-            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
-                commands::CopyFile::run(&args);
-            } else {
-                commands::CopyFile::help();
-            }
+            run_command(args, &commands::CopyFile::run, &commands::CopyFile::help);
+        }
+        "mv" | "move" =>{
+            run_command(args, &commands::MoveFile::run, &commands::MoveFile::help);
         }
         "touch" | "create" => {
-            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
-                commands::Touch::run(&args);
-            } else {
-                commands::Touch::help();
-            }
+            run_command(args, &commands::Touch::run, &commands::Touch::help);
         }
         "del" | "rm" | "remove" => {
-            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
-                commands::DeleteFile::run(&args);
-            } else {
-                commands::DeleteFile::help();
-            }
+            run_command(args, &commands::DeleteFile::run, &commands::DeleteFile::help);
+        }
+        "cat" | "type" => {
+            run_command(args, &commands::ReadFile::run, &commands::ReadFile::help);
         }
         "same" => {
-            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
-                let previous_command = previous_input();
-
-                prompt(previous_command.as_ref());
-                handle_input(previous_command.as_ref());
-                return true;
-            } else {
-                println!("Powtarza poprzednią komendę.");
-            }
-            
+            return run_special_command(args, &same_command_run, &same_command_help);            
         }
         "exit" | "q" => {
-            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
-                println!("Do widzenia!");
-                unsafe {
-                    EXIT = true;
-                }
-            } else {
-                println!("Wychodzi z programu");
-            }            
+            return run_special_command(args, &exit_command_run, &exit_command_help);          
         }
         _ => {
             println!("Nieznana komenda!");
@@ -120,12 +86,52 @@ fn handle_input(input: &str) -> bool {
     false
 }
 
+fn same_command_run() {
+    let previous_command = previous_input();
+
+    prompt(previous_command.as_ref());
+    handle_input(previous_command.as_ref());
+}
+
+fn same_command_help() {
+    println!("Powtarza poprzednią komendę.");
+}
+
+fn exit_command_run() {
+    println!("Do widzenia!");
+    unsafe {
+        EXIT = true;
+    }
+}
+
+fn exit_command_help() {
+    println!("Wychodzi z programu");
+}
+
+fn run_special_command(args: &[&str], run: &Fn(), help: &Fn()) -> bool{
+    if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+        run();
+        true
+    } else {
+        help();
+        false
+    }
+}
+
+fn run_command(args: &[&str], run: &Fn(&[&str]), help: &Fn()){
+    if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+        run(args);
+    } else {
+        help();
+    }
+}
+
 static mut EXIT: bool = false;
 static mut COMMAND_QUEUE: Vec<String> = Vec::new();
 
 fn main() {
     let welcome_message =
-        "\nWitaj w EZ_Shell, wprowadź komendę, możesz wyjść za pom,ocą komendy exit.\nWielkości znaków w nazwach komend nie mają znaczenia\n\n";
+        "\nWitaj w ez_shell, wprowadź komendę, możesz wyjść za pom,ocą komendy exit.\nWielkości znaków w nazwach komend nie mają znaczenia\n\n";
 
     println!("{}", welcome_message);
 

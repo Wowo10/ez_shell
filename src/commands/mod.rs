@@ -1,8 +1,10 @@
 use std::env;
 use std::fs;
-
 use std::fs::File;
 use std::io;
+use std::io::Read;
+use std::io::Write;
+
 pub trait Command {
     fn run(args: &[&str]);
     fn help();
@@ -88,19 +90,76 @@ pub struct DeleteFile {}
 
 impl Command for DeleteFile {
     fn run(args: &[&str]) {
-        fs::remove_file(&args[0]).expect("Nie udało mi się usunąć pliku, sprawdź czy istnieje.");
+        fs::remove_file(&args[0])
+            .expect("Nie udało mi się usunąć pliku, sprawdź czy istnieje.");
     }
-
 
     fn help() {
         println!("{}", "Usuwa podany plik.");
     }
 }
 
+pub struct ReadFile {}
+
+impl Command for ReadFile {
+    fn run(args: &[&str]) {
+        let mut file =
+            File::open(&args[0]).expect("Nie mogę otworzyć pliku, sprawdź czy istnieje.");
+
+        let mut s = String::new();
+        file.read_to_string(&mut s).expect(
+            "Nie mogę przeczytać pliku, sprawdź czy nie jest używany przez inny program.",
+        );
+        println!("{}", s);
+    }
+
+    fn help() {
+        println!("{}", "Wypisuje zawartość pliku na konsolę.");
+    }
+}
+
 pub struct CopyFile {}
 
 impl Command for CopyFile {
-    fn run(args: &[&str]) {}
+    fn run(args: &[&str]) {
+        let mut file =
+            File::open(&args[0]).expect("Nie mogę otworzyć pliku, sprawdź czy istnieje.");
+
+        let mut s = String::new();
+        file.read_to_string(&mut s).expect(
+            "Nie mogę przeczytać pliku, sprawdź czy nie jest używany przez inny program.",
+        );
+
+        let mut target_file =
+            File::create(&args[1]).expect("Nie mogłem stworzyć pliku docelowego.");
+        target_file.write_all(s.as_bytes()).expect("");
+    }
+
+    fn help() {
+        println!("{}", "Kopiuje plik z jednego miejsca w drugie.");
+    }
+}
+
+pub struct MoveFile {}
+
+impl Command for MoveFile {
+    fn run(args: &[&str]) {
+        let mut file =
+            File::open(&args[0]).expect("Nie mogę otworzyć pliku, sprawdź czy istnieje.");
+
+        let mut s = String::new();
+        file.read_to_string(&mut s).expect(
+            "Nie mogę przeczytać pliku, sprawdź czy nie jest używany przez inny program.",
+        );
+        
+
+        let mut target_file =
+            File::create(&args[1]).expect("Nie mogłem stworzyć pliku docelowego.");
+        target_file.write_all(s.as_bytes()).expect("");
+
+        fs::remove_file(&args[0])
+            .expect("Nie udało mi się usunąć pliku, sprawdź czy istnieje.");
+    }
 
     fn help() {
         println!("{}", "Kopiuje plik z jednego miejsca w drugie.");
