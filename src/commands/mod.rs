@@ -1,16 +1,9 @@
-use std::env;
-use std::fs;
-use std::fs::File;
-use std::io;
-use std::io::Read;
-use std::io::Write;
-
 pub trait Command {
     fn run(args: &[&str]);
     fn help();
 }
 
-pub fn message_helper(header: &str, explanation: &str, aliases: &str){
+pub fn message_helper(header: &str, explanation: &str, aliases: &str) {
     println!("{}\n{}\naliasy: {}", header, explanation, aliases);
 }
 
@@ -23,11 +16,20 @@ impl Command for Directory {
     }
 
     fn help() {
-        message_helper("dir:","Wypisuje na ekran zawartość obecnego katalogu.","[ls]");
+        message_helper(
+            "dir:",
+            "Wypisuje na ekran zawartość obecnego katalogu.",
+            "[ls]",
+        );
     }
 }
 
+use std::io;
+
 fn visit_dirs() -> io::Result<()> {
+    use std::env;
+    use std::fs;
+
     for entry in
         fs::read_dir(env::current_dir().expect("Nie mogłem odczytać bierzącej lokalizacji."))?
     {
@@ -44,6 +46,8 @@ pub struct ChangeDirectory {}
 
 impl Command for ChangeDirectory {
     fn run(args: &[&str]) {
+        use std::env;
+
         let mut current = env::current_dir().unwrap();
         current.push(&args[0]);
 
@@ -59,7 +63,7 @@ impl Command for ChangeDirectory {
     }
 
     fn help() {
-        message_helper("cd:","Zmienia katalog na podany.","");
+        message_helper("cd:", "Zmienia katalog na podany.", "");
     }
 }
 
@@ -67,51 +71,80 @@ pub struct PrintWorkingDirectory {}
 
 impl Command for PrintWorkingDirectory {
     fn run(_: &[&str]) {
+        use std::env;
+
         println!("{}", env::current_dir().unwrap().display());
     }
 
     fn help() {
-        message_helper("pwd:","Wypisuje na terminal ścieżkę do obecnego katalogu.","");
+        message_helper(
+            "pwd:",
+            "Wypisuje na terminal ścieżkę do obecnego katalogu.",
+            "",
+        );
     }
 }
 
 ////////////////////////////////FILE HANDLING
 
-fn create_file(name: &str) -> std::fs::File{
+fn create_file(name: &str) -> std::fs::File {
+    use std::fs::File;
+
     File::create(name).expect("Nie mogłem stworzyć pliku.")
 }
 
+fn write_to_file(file: &mut std::fs::File, content: &[u8]){
+    use std::io::Write;
+
+    file.write_all(content).expect(
+        "Nie otrzymałem prawa do zapisu, sprawdź czy plik nie jest otwarty w innym programie",
+    );
+}
+
 fn delete_file(name: &str) {
+    use std::fs;
+
     fs::remove_file(name).expect("Nie udało mi się usunąć pliku, sprawdź czy istnieje.");
 }
 
-fn read_file(name: &str) -> String{
+fn read_file(name: &str) -> String {
+    use std::fs::File;
+    use std::io::Read;
+
     let mut file = File::open(name).expect("Nie mogę otworzyć pliku, sprawdź czy istnieje.");
 
-    let mut s = String::new();
-    file.read_to_string(&mut s).expect(
-        "Nie mogę przeczytać pliku, sprawdź czy nie jest używany przez inny program.",
-    );
-    s
+    let mut content = String::new();
+    file.read_to_string(&mut content)
+        .expect("Nie mogę przeczytać pliku, sprawdź czy nie jest używany przez inny program.");
+       
+    content
 }
 
-fn copy_file(sourcename: &str, targetname: &str){
+fn copy_file(sourcename: &str, targetname: &str) {
     let content = read_file(sourcename);
 
     let mut target_file = create_file(targetname);
-            
-    target_file.write_all(content.as_bytes()).expect("Nie otrzymałem prawa do zapisu, sprawdź czy plik nie jest otwarty w innym programie");
+
+    write_to_file(&mut target_file, content.as_bytes());
 }
 
 pub struct Touch {}
 
 impl Command for Touch {
     fn run(args: &[&str]) {
-        create_file(args[0]);
+        let mut file = create_file(args[0]);
+
+        if args.len() > 1 && args[1] != ""{
+            write_to_file(&mut file, args[1].as_bytes());
+        }
     }
 
     fn help() {
-        message_helper("touch: <nazwa_pliku>","Tworzy nowy plik o podanej nazwie.", "[create]");
+        message_helper(
+            "touch: <nazwa_pliku>",
+            "Tworzy nowy plik o podanej nazwie.",
+            "[create]",
+        );
     }
 }
 
@@ -123,7 +156,7 @@ impl Command for DeleteFile {
     }
 
     fn help() {
-        message_helper("remove: <nazwa_pliku>","Usuwa podany plik.", "[rm] [del]");
+        message_helper("remove: <nazwa_pliku>", "Usuwa podany plik.", "[rm] [del]");
     }
 }
 
@@ -136,7 +169,11 @@ impl Command for ReadFile {
     }
 
     fn help() {
-        message_helper("cat: <filename>","Wypisuje zawartość pliku na konsolę.", "[type] [read]");
+        message_helper(
+            "cat: <filename>",
+            "Wypisuje zawartość pliku na konsolę.",
+            "[type] [read]",
+        );
     }
 }
 
@@ -148,7 +185,11 @@ impl Command for CopyFile {
     }
 
     fn help() {
-        message_helper("copy: <źródło> <cel>","Kopiuje plik z jednego miejsca w drugie.", "[cp]");
+        message_helper(
+            "copy: <źródło> <cel>",
+            "Kopiuje plik z jednego miejsca w drugie.",
+            "[cp]",
+        );
     }
 }
 
@@ -158,10 +199,14 @@ impl Command for MoveFile {
     fn run(args: &[&str]) {
         copy_file(args[0], args[1]);
 
-        delete_file(args[0]);        
+        delete_file(args[0]);
     }
 
     fn help() {
-        message_helper("move: <źródło> <cel>","Przenosi plik z jednego miejsca w drugie.", "[mv]");
+        message_helper(
+            "move: <źródło> <cel>",
+            "Przenosi plik z jednego miejsca w drugie.",
+            "[mv]",
+        );
     }
 }
