@@ -11,7 +11,7 @@ fn wait_for_input() -> String {
     let _ = stdout().flush();
     stdin()
         .read_line(&mut s)
-        .expect("Did not enter a correct string");
+        .expect("Nie wpisałeś odpowiedniego ciągu znaków.");
     if let Some('\n') = s.chars().next_back() {
         s.pop();
     }
@@ -26,7 +26,7 @@ fn prompt(command: &str) {
     print!(
         "{} ~> {}{}",
         env::current_dir()
-            .expect("cannot read current directory")
+            .expect("Nie mogłem odczytać bierzącej lokalizacji.")
             .display(),
         command,
         if command != "" { "\n" } else { "" }
@@ -67,13 +67,13 @@ fn handle_input(input: &str) -> bool {
             return true;
         }
         "exit" | "q" => {
-            println!("Bye!");
+            println!("Do widzenia!");
             unsafe {
                 EXIT = true;
             }
         }
         _ => {
-            println!("Unknown Command!");
+            println!("Nieznana komenda!");
             return true;
         }
     }
@@ -85,7 +85,7 @@ static mut COMMAND_QUEUE: Vec<String> = Vec::new();
 
 fn main() {
     let welcome_message =
-        "\nWelcome to EZ_Shell, input your command, you`re welcome to exit any time.\nCommands are case insensitive\n\n";
+        "\nWitaj w EZ_Shell, wprowadź komendę, możesz wyjść za pom,ocą komendy exit.\nWielkości znaków w nazwach komend nie mają znaczenia\n\n";
 
     println!("{}", welcome_message);
 
