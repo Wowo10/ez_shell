@@ -1,9 +1,7 @@
 #![feature(const_vec_new)]
 
-mod general;
-mod traits;
-
-use traits::*;
+mod commands;
+use commands::*;
 
 fn wait_for_input() -> String {
     use std::io::{stdin, stdout, Write};
@@ -49,21 +47,43 @@ fn handle_input(input: &str) -> bool {
     let first = vec.first().unwrap();
     let vec = &vec[1..];
 
+    println!("{:?}, {}", vec, vec.len()); //DEBUG
+
     match first[..].to_lowercase().as_ref() {
         "dir" | "ls" => {
-            general::Directory::run(&vec);
+            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
+                commands::Directory::run(&vec);
+            }else{
+                commands::Directory::help();
+            }
         }
         "pwd" => {
-            general::PrintWorkingDirectory::run(&vec);
+            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
+                commands::PrintWorkingDirectory::run(&vec);
+            }else{
+                commands::PrintWorkingDirectory::help();
+            }
         }
         "cd" => {
-            general::ChangeDirectory::run(&vec);
+            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
+                commands::ChangeDirectory::run(&vec);
+            }else{
+                commands::ChangeDirectory::help();
+            }
         }
         "cp" | "copy" =>{
-
+            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
+                commands::CopyFile::run(&vec);
+            }else{
+                commands::CopyFile::help();
+            }
         }
         "touch" => {
-            
+            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
+                commands::Touch::run(&vec);
+            }else{
+                commands::Touch::help();
+            }
         }
         "same" => {
             let previous_command = previous_input();

@@ -2,7 +2,10 @@ use std::env;
 use std::fs;
 use std::io;
 
-use super::traits::Command;
+pub trait Command{
+    fn run(args: &[&str]);
+    fn help();
+}
 
 pub struct Directory {}
 
@@ -12,8 +15,8 @@ impl Command for Directory {
         visit_dirs().unwrap();
     }
 
-    fn help() -> &'static str {
-        "Wypisuje na ekran zawartość obecnego katalogu."
+    fn help(){
+        println!("{}", "Wypisuje na ekran zawartość obecnego katalogu.");
     }
 }
 
@@ -47,8 +50,8 @@ impl Command for ChangeDirectory {
         cd(&args[0]);
     }
 
-    fn help() -> &'static str {
-        "Zmienia katalog."
+    fn help() {
+        println!("{}", "Zmienia katalog na podany.");
     }
 }
 
@@ -59,8 +62,8 @@ impl Command for PrintWorkingDirectory{
         println!("{}", env::current_dir().unwrap().display());
     }
 
-    fn help() -> &'static str {
-        "Wypisuje na terminal ścieżkę do obecnego katalogu."
+    fn help() {
+        println!("{}", "Wypisuje na terminal ścieżkę do obecnego katalogu.");
     }
 }
 
@@ -71,19 +74,19 @@ impl Command for Touch{
 
     }
 
-    fn help() -> &'static str {
-        "Tworzy nowy plik o podanej nazwie."
+    fn help() {
+        println!("{}", "Tworzy nowy plik o podanej nazwie.");
     }
 }
 
-pub struct Copy {}
+pub struct CopyFile {}
 
-impl Command for Copy {
+impl Command for CopyFile {
     fn run(args: &[&str]){
 
     }
 
-    fn help() -> &'static str {
-        "Kopiuje plik z jednego miejsca w drugie."
+    fn help() {
+        println!("{}", "Kopiuje plik z jednego miejsca w drugie.");
     }
 }
