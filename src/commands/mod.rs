@@ -75,11 +75,39 @@ impl Command for PrintWorkingDirectory {
     }
 }
 
+////////////////////////////////FILE HANDLING
+
+fn create_file(name: &str) -> std::fs::File{
+    File::create(name).expect("Nie mogłem stworzyć pliku.")
+}
+
+fn delete_file(name: &str) {
+    fs::remove_file(name).expect("Nie udało mi się usunąć pliku, sprawdź czy istnieje.");
+}
+
+fn read_file(name: &str) -> String{
+    let mut file = File::open(name).expect("Nie mogę otworzyć pliku, sprawdź czy istnieje.");
+
+    let mut s = String::new();
+    file.read_to_string(&mut s).expect(
+        "Nie mogę przeczytać pliku, sprawdź czy nie jest używany przez inny program.",
+    );
+    s
+}
+
+fn copy_file(sourcename: &str, targetname: &str){
+    let content = read_file(sourcename);
+
+    let mut target_file = create_file(targetname);
+            
+    target_file.write_all(content.as_bytes()).expect("Nie otrzymałem prawa do zapisu, sprawdź czy plik nie jest otwarty w innym programie");
+}
+
 pub struct Touch {}
 
 impl Command for Touch {
     fn run(args: &[&str]) {
-        File::create(&args[0]).expect("Nie mogłem stworzyć pliku.");
+        create_file(args[0]);
     }
 
     fn help() {
@@ -91,8 +119,7 @@ pub struct DeleteFile {}
 
 impl Command for DeleteFile {
     fn run(args: &[&str]) {
-        fs::remove_file(&args[0])
-            .expect("Nie udało mi się usunąć pliku, sprawdź czy istnieje.");
+        delete_file(args[0]);
     }
 
     fn help() {
@@ -104,14 +131,8 @@ pub struct ReadFile {}
 
 impl Command for ReadFile {
     fn run(args: &[&str]) {
-        let mut file =
-            File::open(&args[0]).expect("Nie mogę otworzyć pliku, sprawdź czy istnieje.");
-
-        let mut s = String::new();
-        file.read_to_string(&mut s).expect(
-            "Nie mogę przeczytać pliku, sprawdź czy nie jest używany przez inny program.",
-        );
-        println!("{}", s);
+        let content = read_file(args[0]);
+        println!("{}", content);
     }
 
     fn help() {
@@ -123,17 +144,7 @@ pub struct CopyFile {}
 
 impl Command for CopyFile {
     fn run(args: &[&str]) {
-        let mut file =
-            File::open(&args[0]).expect("Nie mogę otworzyć pliku, sprawdź czy istnieje.");
-
-        let mut s = String::new();
-        file.read_to_string(&mut s).expect(
-            "Nie mogę przeczytać pliku, sprawdź czy nie jest używany przez inny program.",
-        );
-
-        let mut target_file =
-            File::create(&args[1]).expect("Nie mogłem stworzyć pliku docelowego.");
-        target_file.write_all(s.as_bytes()).expect("");
+        copy_file(args[0], args[1]);
     }
 
     fn help() {
@@ -145,21 +156,9 @@ pub struct MoveFile {}
 
 impl Command for MoveFile {
     fn run(args: &[&str]) {
-        let mut file =
-            File::open(&args[0]).expect("Nie mogę otworzyć pliku, sprawdź czy istnieje.");
+        copy_file(args[0], args[1]);
 
-        let mut s = String::new();
-        file.read_to_string(&mut s).expect(
-            "Nie mogę przeczytać pliku, sprawdź czy nie jest używany przez inny program.",
-        );
-        
-
-        let mut target_file =
-            File::create(&args[1]).expect("Nie mogłem stworzyć pliku docelowego.");
-        target_file.write_all(s.as_bytes()).expect("");
-
-        fs::remove_file(&args[0])
-            .expect("Nie udało mi się usunąć pliku, sprawdź czy istnieje.");
+        delete_file(args[0]);        
     }
 
     fn help() {
