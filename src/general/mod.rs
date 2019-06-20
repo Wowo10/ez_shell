@@ -40,8 +40,7 @@ pub fn cd(path: &str) {
     }
 }
 
-pub struct ChangeDirectory {   
-}
+pub struct ChangeDirectory {}
 
 impl Command for ChangeDirectory {
     fn run(args: &[&str]){
@@ -62,6 +61,18 @@ impl Command for PrintWorkingDirectory{
 
     fn help() -> &'static str {
         "Wypisuje na terminal ścieżkę do obecnego katalogu."
+    }
+}
+
+pub struct Touch{}
+
+impl Command for Touch{
+    fn run(args: &[&str]){
+
+    }
+
+    fn help() -> &'static str {
+        "Tworzy nowy plik o podanej nazwie."
     }
 }
 

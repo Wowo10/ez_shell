@@ -59,6 +59,12 @@ fn handle_input(input: &str) -> bool {
         "cd" => {
             general::ChangeDirectory::run(&vec);
         }
+        "cp" | "copy" =>{
+
+        }
+        "touch" => {
+            
+        }
         "same" => {
             let previous_command = previous_input();
 
