@@ -45,56 +45,72 @@ fn handle_input(input: &str) -> bool {
     let vec: Vec<&str> = split.collect();
 
     let first = vec.first().unwrap();
-    let vec = &vec[1..];
+    let args = &vec[1..];
 
     match first[..].to_lowercase().as_ref() {
         "dir" | "ls" => {
-            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
-                commands::Directory::run(&vec);
-            }else{
+            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+                commands::Directory::run(&args);
+            } else {
                 commands::Directory::help();
             }
         }
         "pwd" => {
-            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
-                commands::PrintWorkingDirectory::run(&vec);
-            }else{
+            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+                commands::PrintWorkingDirectory::run(&args);
+            } else {
                 commands::PrintWorkingDirectory::help();
             }
         }
         "cd" => {
-            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
-                commands::ChangeDirectory::run(&vec);
-            }else{
+            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+                commands::ChangeDirectory::run(&args);
+            } else {
                 commands::ChangeDirectory::help();
             }
         }
         "cp" | "copy" =>{
-            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
-                commands::CopyFile::run(&vec);
-            }else{
+            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+                commands::CopyFile::run(&args);
+            } else {
                 commands::CopyFile::help();
             }
         }
-        "touch" => {
-            if vec.len() == 0 || (vec[0] != "help" && vec[0] != "--help"){
-                commands::Touch::run(&vec);
-            }else{
+        "touch" | "create" => {
+            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+                commands::Touch::run(&args);
+            } else {
                 commands::Touch::help();
             }
         }
+        "del" | "rm" | "remove" => {
+            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+                commands::DeleteFile::run(&args);
+            } else {
+                commands::DeleteFile::help();
+            }
+        }
         "same" => {
-            let previous_command = previous_input();
+            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+                let previous_command = previous_input();
 
-            prompt(previous_command.as_ref());
-            handle_input(previous_command.as_ref());
-            return true;
+                prompt(previous_command.as_ref());
+                handle_input(previous_command.as_ref());
+                return true;
+            } else {
+                println!("Powtarza poprzednią komendę.");
+            }
+            
         }
         "exit" | "q" => {
-            println!("Do widzenia!");
-            unsafe {
-                EXIT = true;
-            }
+            if args.len() == 0 || (args[0] != "help" && args[0] != "--help"){
+                println!("Do widzenia!");
+                unsafe {
+                    EXIT = true;
+                }
+            } else {
+                println!("Wychodzi z programu");
+            }            
         }
         _ => {
             println!("Nieznana komenda!");
