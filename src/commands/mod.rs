@@ -141,8 +141,8 @@ impl Command for Touch {
 
     fn help() {
         message_helper(
-            "touch: <nazwa_pliku>",
-            "Tworzy nowy plik o podanej nazwie.",
+            "touch: <nazwa_pliku> <*tekst*>",
+            "Tworzy nowy plik o podanej nazwie, opcjonalnie zapisuje tekst do pliku",
             "[create]",
         );
     }
