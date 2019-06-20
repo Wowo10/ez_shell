@@ -10,6 +10,10 @@ pub trait Command {
     fn help();
 }
 
+pub fn message_helper(header: &str, explanation: &str, aliases: &str){
+    println!("{}\n{}\naliasy: {}", header, explanation, aliases);
+}
+
 pub struct Directory {}
 
 impl Command for Directory {
@@ -19,7 +23,7 @@ impl Command for Directory {
     }
 
     fn help() {
-        println!("{}", "Wypisuje na ekran zawartość obecnego katalogu.");
+        message_helper("dir:","Wypisuje na ekran zawartość obecnego katalogu.","[ls]");
     }
 }
 
@@ -55,7 +59,7 @@ impl Command for ChangeDirectory {
     }
 
     fn help() {
-        println!("{}", "Zmienia katalog na podany.");
+        message_helper("cd:","Zmienia katalog na podany.","");
     }
 }
 
@@ -67,10 +71,7 @@ impl Command for PrintWorkingDirectory {
     }
 
     fn help() {
-        println!(
-            "{}",
-            "Wypisuje na terminal ścieżkę do obecnego katalogu."
-        );
+        message_helper("pwd:","Wypisuje na terminal ścieżkę do obecnego katalogu.","");
     }
 }
 
@@ -82,7 +83,7 @@ impl Command for Touch {
     }
 
     fn help() {
-        println!("{}", "Tworzy nowy plik o podanej nazwie.");
+        message_helper("touch: <nazwa_pliku>","Tworzy nowy plik o podanej nazwie.", "[create]");
     }
 }
 
@@ -95,7 +96,7 @@ impl Command for DeleteFile {
     }
 
     fn help() {
-        println!("{}", "Usuwa podany plik.");
+        message_helper("remove: <nazwa_pliku>","Usuwa podany plik.", "[rm] [del]");
     }
 }
 
@@ -114,7 +115,7 @@ impl Command for ReadFile {
     }
 
     fn help() {
-        println!("{}", "Wypisuje zawartość pliku na konsolę.");
+        message_helper("cat: <filename>","Wypisuje zawartość pliku na konsolę.", "[type] [read]");
     }
 }
 
@@ -136,7 +137,7 @@ impl Command for CopyFile {
     }
 
     fn help() {
-        println!("{}", "Kopiuje plik z jednego miejsca w drugie.");
+        message_helper("copy: <źródło> <cel>","Kopiuje plik z jednego miejsca w drugie.", "[cp]");
     }
 }
 
@@ -162,6 +163,6 @@ impl Command for MoveFile {
     }
 
     fn help() {
-        println!("{}", "Kopiuje plik z jednego miejsca w drugie.");
+        message_helper("move: <źródło> <cel>","Przenosi plik z jednego miejsca w drugie.", "[mv]");
     }
 }
