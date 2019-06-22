@@ -1,7 +1,6 @@
 #![feature(const_vec_new)]
 
 mod commands;
-use commands::*;
 
 fn wait_for_input() -> String {
     use std::io::{stdin, stdout, Write};
@@ -49,40 +48,28 @@ fn handle_input(input: &str) -> bool {
 
     match first[..].to_lowercase().as_ref() {
         "dir" | "ls" => {
-            run_command(args, &commands::Directory::run, &commands::Directory::help);
+            run_command::<commands::Directory>(args);
         }
         "pwd" => {
-            run_command(
-                args,
-                &commands::PrintWorkingDirectory::run,
-                &commands::PrintWorkingDirectory::help,
-            );
+            run_command::<commands::PrintWorkingDirectory>(args);            
         }
         "cd" => {
-            run_command(
-                args,
-                &commands::ChangeDirectory::run,
-                &commands::ChangeDirectory::help,
-            );
+            run_command::<commands::ChangeDirectory>(args);
         }
         "cp" | "copy" => {
-            run_command(args, &commands::CopyFile::run, &commands::CopyFile::help);
+            run_command::<commands::CopyFile>(args);
         }
         "mv" | "move" => {
-            run_command(args, &commands::MoveFile::run, &commands::MoveFile::help);
+            run_command::<commands::MoveFile>(args);
         }
         "touch" | "create" => {
-            run_command(args, &commands::Touch::run, &commands::Touch::help);
+            run_command::<commands::Touch>(args);
         }
         "del" | "rm" | "remove" => {
-            run_command(
-                args,
-                &commands::DeleteFile::run,
-                &commands::DeleteFile::help,
-            );
+            run_command::<commands::DeleteFile>(args);
         }
         "cat" | "type" | "read" => {
-            run_command(args, &commands::ReadFile::run, &commands::ReadFile::help);
+            run_command::<commands::ReadFile>(args);
         }
         "same" => {
             return run_special_command(args, &same_command_run, &same_command_help);
@@ -130,11 +117,11 @@ fn run_special_command(args: &[&str], run: &Fn(), help: &Fn()) -> bool {
     }
 }
 
-fn run_command(args: &[&str], run: &Fn(&[&str]), help: &Fn()) {
+fn run_command<T : commands::Command>(args: &[&str]) {
     if args.len() == 0 || (args[0] != "help" && args[0] != "--help") {
-        run(args);
+        T::run(args);
     } else {
-        help();
+        T::help();
     }
 }
 
